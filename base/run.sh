@@ -21,7 +21,7 @@ monitor_log_handler() {
 }
 
 # Validate input arguments
-if [ $# -ne 2 ]; then
+if [ $# -lt 2 ]; then
   echo "Error: Exactly two arguments are required."
   usage
 fi
