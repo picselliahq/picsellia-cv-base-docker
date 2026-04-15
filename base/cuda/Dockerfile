@@ -1,27 +1,35 @@
-ARG CUDA_VERSION=11.7.1
-ARG UBUNTU_VERSION=20.04
-FROM nvidia/cuda:${CUDA_VERSION}-cudnn8-runtime-ubuntu${UBUNTU_VERSION} AS base
+ARG CUDA_VERSION=12.4.1
+ARG CUDNN_VARIANT=cudnn8
+ARG UBUNTU_VERSION=22.04
+FROM nvidia/cuda:${CUDA_VERSION}-${CUDNN_VARIANT}-runtime-ubuntu${UBUNTU_VERSION} AS base
 
-ARG PYTHON_VERSION=3.10
+ARG PYTHON_VERSION=3.12
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_HTTP_TIMEOUT=600 \
     DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y build-essential software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa &&  \
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    software-properties-common \
+    curl \
+    ca-certificates \
+    && add-apt-repository ppa:deadsnakes/ppa && \
     apt-get update && \
     apt-get install --no-install-recommends -y \
-    python3-pip libpq-dev libgtk2.0-dev libgl1-mesa-dev gcc \
-        python${PYTHON_VERSION}-full python${PYTHON_VERSION}-dev python${PYTHON_VERSION}-distutils && \
-    rm -rf /var/lib/apt/lists/*
-
-RUN if [ "$PYTHON_VERSION" != "3.8" ] && [ "$PYTHON_VERSION" != "3.10" ]; then \
-    python${PYTHON_VERSION} -m ensurepip --upgrade; \
-fi && \
-    python${PYTHON_VERSION} -m pip install --upgrade pip setuptools && \
-    python${PYTHON_VERSION} -m pip install uv
+    libpq-dev libgtk2.0-dev libgl1-mesa-dev gcc \
+    python${PYTHON_VERSION} \
+    python${PYTHON_VERSION}-dev \
+    python${PYTHON_VERSION}-venv \
+    && rm -f /usr/local/bin/python \
+    && ln -s /usr/bin/python${PYTHON_VERSION} /usr/local/bin/python \
+    && curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py \
+    && python${PYTHON_VERSION} /tmp/get-pip.py \
+    && rm -f /tmp/get-pip.py \
+    && python${PYTHON_VERSION} -m pip install --upgrade pip setuptools \
+    && python${PYTHON_VERSION} -m pip install uv \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/usr/local/cuda/bin:${PATH}" \
     LD_LIBRARY_PATH="/usr/local/cuda/lib:/usr/local/cuda/lib64:${LD_LIBRARY_PATH}"
