@@ -26,7 +26,9 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN rm -f /usr/local/bin/python && \
     ln -s /usr/bin/python${PYTHON_VERSION} /usr/local/bin/python
 
-RUN python${PYTHON_VERSION} -m ensurepip --upgrade && \
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && \
+    python${PYTHON_VERSION} /tmp/get-pip.py --break-system-packages && \
+    rm -f /tmp/get-pip.py && \
     rm -rf /var/lib/apt/lists/*
 
 RUN python${PYTHON_VERSION} -m pip install --upgrade --break-system-packages pip setuptools && \
