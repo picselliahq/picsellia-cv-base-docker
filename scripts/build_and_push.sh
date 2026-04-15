@@ -7,8 +7,8 @@ python_versions_cpu=("3.12" "3.13" "3.14")
 # Format: "CUDA_VERSION CUDNN_VARIANT UBUNTU_VERSION SUPPORTED_PYTHON_VERSIONS"
 gpu_configs=(
     "12.2.2 cudnn8 22.04 3.12"
-    "12.4.1 cudnn8 22.04 3.12 3.13"
-    "12.6.3 cudnn9 24.04 3.12 3.13 3.14"
+    "12.4.1 cudnn 22.04 3.12 3.13"
+    "12.6.3 cudnn 24.04 3.12 3.13 3.14"
 )
 
 for config in "${gpu_configs[@]}"; do
