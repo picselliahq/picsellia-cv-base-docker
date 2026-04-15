@@ -26,14 +26,12 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN rm -f /usr/local/bin/python && \
     ln -s /usr/bin/python${PYTHON_VERSION} /usr/local/bin/python
 
-RUN curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && \
-    python${PYTHON_VERSION} /tmp/get-pip.py && \
-    rm -f /tmp/get-pip.py && \
+RUN python${PYTHON_VERSION} -m ensurepip --upgrade && \
     rm -rf /var/lib/apt/lists/*
 
-RUN python${PYTHON_VERSION} -m pip install --upgrade pip setuptools && \
-    python${PYTHON_VERSION} -m pip install uv && \
-    uv pip install --python=$(which python${PYTHON_VERSION}) --no-cache-dir tabulate
+RUN python${PYTHON_VERSION} -m pip install --upgrade --break-system-packages pip setuptools && \
+    python${PYTHON_VERSION} -m pip install --break-system-packages uv && \
+    uv pip install --python=$(which python${PYTHON_VERSION}) --break-system-packages --no-cache-dir tabulate
 
 COPY ./base /experiment
 
