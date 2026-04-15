@@ -23,7 +23,7 @@ The GPU image is built from `base/cuda/Dockerfile` and supports Python `3.12` to
 
 Tag format:
 - `picsellia/cuda:<cuda_version>-<cudnn_variant>-ubuntu<ubuntu_version>-python<python_version>`
-- Example: `picsellia/cuda:12.6.3-cudnn9-ubuntu24.04-python3.14`
+- Example: `picsellia/cuda:12.6.3-cudnn-ubuntu24.04-python3.14`
 
 ## Supported compatibility matrix
 
@@ -53,3 +53,13 @@ Use:
 ```
 
 The script builds and pushes all matrix combinations above.
+
+Useful options:
+
+```bash
+# List all image combinations with their index
+./scripts/build_and_push.sh --list
+
+# Resume from a specific index (example: restart from index 4)
+./scripts/build_and_push.sh --start-index 4
+```
