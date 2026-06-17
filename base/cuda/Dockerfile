@@ -32,7 +32,7 @@ RUN rm -f /usr/local/bin/python && \
     ln -s /usr/bin/python${PYTHON_VERSION} /usr/local/bin/python
 
 RUN curl -sS https://bootstrap.pypa.io/get-pip.py -o /tmp/get-pip.py && \
-    python${PYTHON_VERSION} /tmp/get-pip.py --break-system-packages && \
+    python${PYTHON_VERSION} /tmp/get-pip.py --break-system-packages --ignore-installed  && \
     rm -f /tmp/get-pip.py && \
     rm -rf /var/lib/apt/lists/*
 
