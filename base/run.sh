@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage() {
-  echo "Usage: $0 <python_version> <training_script>.py"
+  echo "Usage: $0 <python_version> <training_script>.py [script_args...]"
   exit 1
 }
 
@@ -22,12 +22,13 @@ monitor_log_handler() {
 
 # Validate input arguments
 if [ $# -lt 2 ]; then
-  echo "Error: Exactly two arguments are required."
+  echo "Error: At least two arguments are required."
   usage
 fi
 
 python_version=$1
 script_file=$2
+script_args=("${@:3}")
 
 if [[ "$python_version" != python3.* ]]; then
   echo "Error: The first argument must be a valid Python version (e.g., python3.8)."
@@ -59,7 +60,7 @@ exec {tee_fd}> >(tee -a "$log_file_path")
 tee_pid=$!
 
 # 3. Start the training script in the background, writing to the tee pipe
-$python_cmd "$script_file" >&"$tee_fd" 2>&1 &
+$python_cmd "$script_file" "${script_args[@]}" >&"$tee_fd" 2>&1 &
 training_script_pid=$!
 
 # Close our copy of the pipe so tee receives EOF as soon as the training script exits
