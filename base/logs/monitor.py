@@ -169,7 +169,26 @@ class LogMonitor:
             if self.experiment:
                 self.experiment.update(status=ExperimentStatus.FAILED)
 
+    def wait_for_exit_code(self):
+        """Tail the log file until the exit code without sending anything to Picsellia."""
+        with open(self.log_file_path) as log_file:
+            log_tailer = LogTailer(log_file)
+            for line, _, _ in log_tailer.tail():
+                if EXIT_CODE_PATTERN.search(line):
+                    break
+
     def start_monitoring(self):
+        if self.job is None:
+            print(
+                "Warning: DEBUG is set but no experiment was found "
+                "(set experiment_id or experiment_name). "
+                "Logs will only be displayed in the terminal, not sent to Picsellia.",
+                flush=True,
+            )
+            # Keep running until the end: run.sh stops the script if the handler exits early
+            self.wait_for_exit_code()
+            return
+
         if self.experiment:
             section_header = "--#--Set up training"
         else:
